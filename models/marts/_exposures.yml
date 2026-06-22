@@ -1,0 +1,65 @@
+version: 2
+
+exposures:
+  - name: jaffle_shop_executive_dashboard
+    label: Executive Dashboard
+    type: dashboard
+    maturity: high
+    url: https://bi.jaffleshop.com/dashboards/executive
+    description: >
+      High-level executive dashboard tracking top-line revenue, order volume,
+      customer growth, and location-level performance for the Jaffle Shop network.
+    depends_on:
+      - ref('customers')
+      - ref('orders')
+      - ref('location_performance')
+    owner:
+      name: Analytics Engineering
+      email: analytics@jaffleshop.com
+
+  - name: marketing_customer_report
+    label: Marketing Customer Report
+    type: dashboard
+    maturity: medium
+    url: https://bi.jaffleshop.com/dashboards/marketing-customers
+    description: >
+      Customer segmentation and lifetime value report used by the marketing team
+      to identify high-value customer cohorts and churn risk segments.
+    depends_on:
+      - ref('customers')
+      - ref('customer_segments')
+    owner:
+      name: Marketing Team
+      email: marketing@jaffleshop.com
+
+  - name: finance_revenue_analysis
+    label: Finance Revenue Analysis
+    type: analysis
+    maturity: high
+    url: https://bi.jaffleshop.com/analyses/revenue
+    description: >
+      Detailed revenue and margin analysis used by the finance team for monthly
+      reporting and forecasting. Includes gross margin breakdown by product category.
+    depends_on:
+      - ref('orders')
+      - ref('order_items')
+      - ref('location_performance')
+    owner:
+      name: Finance Team
+      email: finance@jaffleshop.com
+
+  - name: ops_supply_cost_tracker
+    label: Operations Supply Cost Tracker
+    type: dashboard
+    maturity: low
+    url: https://bi.jaffleshop.com/dashboards/supply-costs
+    description: >
+      Operational dashboard for tracking supply costs by product and location.
+      Helps procurement identify cost-reduction opportunities.
+    depends_on:
+      - ref('order_items')
+      - ref('products')
+      - ref('supplies')
+    owner:
+      name: Analytics Engineering
+      email: analytics@jaffleshop.com

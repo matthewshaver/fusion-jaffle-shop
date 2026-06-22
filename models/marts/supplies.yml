@@ -1,0 +1,37 @@
+models:
+  - name: supplies
+    description: "Supplies dimension. One row per supply item per product SKU. Supplies dimension table. The grain of the table is one row per supply and product combination.\n"
+    config:
+      group: analytics
+      access: public
+    columns:
+      - name: supply_uuid
+        description: Surrogate key combining supply_id and product_id.
+        data_tests:
+          - not_null
+          - unique
+        entity:
+          type: primary
+          name: supply
+      - name: supply_id
+        description: The raw supply identifier from the source system.
+        dimension:
+          type: categorical
+      - name: supply_name
+        description: Human-readable name of the supply item.
+        dimension:
+          type: categorical
+      - name: supply_cost
+        description: "{{ doc('supply_cost') }}"
+        dimension:
+          type: categorical
+      - name: is_perishable_supply
+        description: Boolean flag — true if the supply item is perishable.
+        dimension:
+          type: categorical
+      - name: product_id
+        description: "{{ doc('product_id') }}"
+        dimension:
+          type: categorical
+    semantic_model:
+      enabled: true

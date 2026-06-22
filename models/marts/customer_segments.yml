@@ -1,0 +1,63 @@
+models:
+  - name: customer_segments
+    description: >
+      RFM-scored customer segmentation model. Assigns each customer a Recency,
+      Frequency, and Monetary score (each 1–4) and rolls them into a named segment
+      such as Champions, Loyal Customers, At Risk, or Lost. Built as a Python model
+      in dbt Fusion.
+    config:
+      group: marketing
+      access: public
+      tags: ["python", "segmentation"]
+    columns:
+      - name: customer_id
+        description: "{{ doc('customer_id') }}"
+        data_tests:
+          - not_null
+          - unique
+      - name: customer_name
+        description: Full name of the customer.
+      - name: recency_score
+        description: Score from 1–4 based on how recently the customer ordered (4 = most recent).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4]
+      - name: frequency_score
+        description: Score from 1–4 based on how frequently the customer orders (4 = most frequent).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4]
+      - name: monetary_score
+        description: Score from 1–4 based on how much the customer has spent (4 = highest spend).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4]
+      - name: rfm_score
+        description: Concatenation of recency, frequency, and monetary scores (e.g. "443").
+      - name: customer_segment
+        description: >
+          Named segment derived from RFM scores. Possible values: Champions, Loyal Customers,
+          Recent Customers, Potential Loyalists, At Risk, Lost.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - "Champions"
+                  - "Loyal Customers"
+                  - "Recent Customers"
+                  - "Potential Loyalists"
+                  - "At Risk"
+                  - "Lost"
+      - name: days_since_last_order
+        description: Number of days since the customer's most recent order.
+      - name: count_lifetime_orders
+        description: Total number of orders the customer has placed.
+      - name: lifetime_spend
+        description: "{{ doc('lifetime_spend') }}"

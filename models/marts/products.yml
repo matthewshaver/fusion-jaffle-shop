@@ -1,0 +1,45 @@
+models:
+  - name: products
+    description: "Product catalog dimension. One row per SKU sold across Jaffle Shop locations. Product dimension table. The grain of the table is one row per product.\n"
+    config:
+      group: analytics
+      access: public
+    columns:
+      - name: product_id
+        description: "{{ doc('product_id') }}"
+        data_tests:
+          - not_null
+          - unique
+          - validate_sku:
+              arguments:
+                column_name: product_id
+        entity:
+          type: primary
+          name: product
+      - name: product_name
+        description: Human-readable product name.
+        dimension:
+          type: categorical
+      - name: product_type
+        description: Product category — either 'jaffle' or 'beverage'.
+        dimension:
+          type: categorical
+      - name: product_price
+        description: Retail price of the product in dollars.
+        data_tests:
+          - not_null
+        dimension:
+          type: categorical
+      - name: is_food_item
+        description: "{{ doc('is_food_item') }}"
+        dimension:
+          type: categorical
+      - name: is_drink_item
+        description: "{{ doc('is_drink_item') }}"
+        dimension:
+          type: categorical
+      - name: product_description
+        dimension:
+          type: categorical
+    semantic_model:
+      enabled: true

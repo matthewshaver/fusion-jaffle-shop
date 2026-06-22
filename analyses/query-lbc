@@ -1,0 +1,19 @@
+with
+
+orders_last_year as (
+    select
+        order_id
+    from {{ ref('orders') }}
+    where year(ordered_at) = year(current_date()) - 1
+),
+
+orders_this_year as (
+    select
+        order_id
+    from {{ ref('orders') }}
+    where year(ordered_at) = year(current_date())
+)
+
+select
+    (select count(*) from orders_last_year) as orders_last_year,
+    (select count(*) from orders_this_year) as orders_this_year

@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: int_order_items_products
+    description: >
+      Intermediate model joining order items with their associated products and
+      aggregated supply costs. Materialized as ephemeral to avoid redundant storage.
+      Used as a building block for mart-layer models.
+    config:
+      access: private
+      group: analytics
+    columns:
+      - name: order_item_id
+        description: The unique key for each order item.
+        data_tests:
+          - not_null
+          - unique
+      - name: order_id
+        description: Foreign key to the orders table.
+      - name: product_id
+        description: Foreign key to the products table.
+      - name: product_price
+        description: Retail price of the product in dollars.
+      - name: supply_cost
+        description: Total supply cost for this product across all supply items.
+      - name: gross_margin
+        description: product_price minus supply_cost — the unit-level margin.
+
+  - name: int_customer_order_history
+    description: >
+      Intermediate model that enriches each order with customer-level running
+      aggregates: cumulative spend, running average order value, days since last
+      order, and customer order sequence number. Used by the customers mart.
+    config:
+      access: protected
+      group: analytics
+    columns:
+      - name: order_id
+        description: The unique key for each order.
+        data_tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: Foreign key to the customers table.
+      - name: customer_order_number
+        description: Sequential order number for this customer, starting at 1.
+      - name: cumulative_spend
+        description: Running total of order_total for this customer up to and including this order.
+      - name: running_avg_order_value
+        description: Running average of order_total for this customer.
+      - name: days_since_last_order
+        description: Number of days between this order and the customer's prior order. Null for first orders.

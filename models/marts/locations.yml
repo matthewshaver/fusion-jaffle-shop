@@ -1,0 +1,37 @@
+models:
+  - name: locations
+    description: "Location dimension table. One row per Jaffle Shop store location. Location dimension table. The grain of the table is one row per location.\n"
+    config:
+      group: analytics
+      access: public
+    columns:
+      - name: location_id
+        description: "{{ doc('location_id') }}"
+        data_tests:
+          - not_null
+          - unique
+        entity:
+          type: primary
+          name: location
+      - name: location_name
+        description: The human-readable name of the store location.
+        dimension:
+          type: categorical
+      - name: opened_date
+        description: The date the location first opened for business.
+        dimension:
+          type: time
+        granularity: day
+      - name: tax_rate
+        description: Local tax rate applied to all orders at this location.
+
+    semantic_model:
+      enabled: true
+    agg_time_dimension: opened_date
+    metrics:
+      - name: average_tax_rate
+        description: Average tax rate.
+        expr: tax_rate
+        agg: average
+        type: simple
+        hidden: true

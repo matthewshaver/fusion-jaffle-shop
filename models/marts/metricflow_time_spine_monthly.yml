@@ -1,0 +1,9 @@
+models:
+  - name: metricflow_time_spine_monthly
+    description: A monthly time spine used by MetricFlow for month-grain metric queries.
+    time_spine:
+      standard_granularity_column: date_month
+    columns:
+      - name: date_month
+        description: The base date column for monthly granularity.
+        granularity: month

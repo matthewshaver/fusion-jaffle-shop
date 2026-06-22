@@ -1,0 +1,119 @@
+models:
+  - name: location_performance
+    description: >
+      Location-level performance rollup. One row per store location, with aggregated revenue, margin, order counts, and customer counts.
+       Location-level performance semantic model. Used to analyze revenue,
+      margin, and customer metrics by store location.
+    config:
+      group: finance
+      access: public
+      contract:
+        enforced: true
+    columns:
+      - name: location_id
+        description: The unique identifier for each store location.
+        data_type: varchar
+        data_tests:
+          - not_null
+          - unique
+        entity:
+          type: primary
+          name: location
+      - name: location_name
+        description: The human-readable name of the store location.
+        data_type: varchar
+      - name: opened_date
+        description: The date the store location was opened.
+        data_type: timestamp_ntz
+      - name: tax_rate
+        description: The local tax rate applied to orders at this location.
+        data_type: number
+      - name: total_orders
+        description: Total number of orders placed at this location.
+        data_type: number
+      - name: unique_customers
+        description: Total number of distinct customers who have ordered at this location.
+        data_type: number
+      - name: total_revenue
+        description: Sum of all order totals (pre-tax) placed at this location.
+        data_type: number
+      - name: total_tax_collected
+        description: Sum of all tax paid across orders at this location.
+        data_type: number
+      - name: total_supply_cost
+        description: Sum of supply costs for all orders at this location.
+        data_type: number
+      - name: total_gross_margin
+        description: total_revenue minus total_supply_cost.
+        data_type: number
+      - name: avg_order_value
+        description: Average order total at this location.
+        data_type: number
+      - name: avg_gross_margin_per_order
+        description: Average gross margin per order at this location.
+        data_type: number
+      - name: first_order_at
+        description: Timestamp of the first order placed at this location.
+        data_type: timestamp_ntz
+        dimension:
+          type: time
+        granularity: day
+      - name: last_order_at
+        description: Timestamp of the most recent order placed at this location.
+        data_type: timestamp_ntz
+        dimension:
+          type: time
+        granularity: day
+      - name: gross_margin_pct
+        description: Gross margin as a percentage of total revenue.
+        data_type: number
+
+    semantic_model:
+      enabled: true
+    agg_time_dimension: first_order_at
+    metrics:
+      - name: location_revenue
+        description: Total revenue by location.
+        label: Location Revenue
+        type: simple
+        agg: sum
+        expr: total_revenue
+      - name: location_orders
+        description: Total order count by location.
+        label: Location Orders
+        type: simple
+        agg: sum
+        expr: total_orders
+      - name: location_customers
+        description: Unique customer count by location.
+        label: Location Unique Customers
+        type: simple
+        agg: sum
+        expr: unique_customers
+      - name: location_gross_margin
+        description: Total gross margin at a location.
+        agg: sum
+        expr: total_gross_margin
+
+        type: simple
+        hidden: true
+      - name: revenue_per_customer_by_location
+        description: Average revenue per unique customer, by location.
+        label: Revenue Per Customer (Location)
+        type: ratio
+        numerator: location_revenue
+        denominator: location_customers
+saved_queries:
+  - name: location_kpis
+    query_params:
+      metrics:
+        - location_revenue
+        - location_orders
+        - location_customers
+        - revenue_per_customer_by_location
+      group_by:
+        - Entity('location')
+    exports:
+      - name: location_kpis
+        config:
+          export_as: table

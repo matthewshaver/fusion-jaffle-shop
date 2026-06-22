@@ -1,0 +1,119 @@
+version: 2
+
+sources:
+  - name: ecom
+    schema: raw
+    description: E-commerce data for the Jaffle Shop
+    tables:
+      - name: raw_customers
+        description: One record per person who has purchased one or more items
+        columns:
+          - name: id
+            description: The unique identifier for each customer.
+            data_tests:
+              - not_null
+              - unique
+          - name: name
+            description: Full name of the customer.
+            data_tests:
+              - not_null
+
+      - name: raw_orders
+        description: One record per order (consisting of one or more order items)
+        config:
+          loaded_at_field: ordered_at
+          event_time: ordered_at
+          freshness:
+            warn_after:
+              count: 24
+              period: hour
+            error_after:
+              count: 48
+              period: hour
+        columns:
+          - name: id
+            description: The unique identifier for each order.
+            data_tests:
+              - not_null
+              - unique
+          - name: customer
+            description: Foreign key to raw_customers.
+            data_tests:
+              - not_null
+              - relationships:
+                  arguments:
+                    to: source('ecom', 'raw_customers')
+                    field: id
+          - name: ordered_at
+            description: Timestamp when the order was placed.
+            data_tests:
+              - not_null
+          - name: order_total
+            description: Total order amount in cents including tax.
+            data_tests:
+              - not_null
+
+      - name: raw_items
+        description: Items included in an order
+        columns:
+          - name: id
+            description: The unique identifier for each order item.
+            data_tests:
+              - not_null
+              - unique
+          - name: order_id
+            description: Foreign key to raw_orders.
+            data_tests:
+              - not_null
+
+      - name: raw_stores
+        config:
+          loaded_at_field: opened_at
+          freshness:
+            warn_after:
+              count: 24
+              period: hour
+            error_after:
+              count: 48
+              period: hour
+        description: One record per physical Jaffle Shop store location.
+        columns:
+          - name: id
+            description: The unique identifier for each store.
+            data_tests:
+              - not_null
+              - unique
+          - name: name
+            description: Store location name.
+            data_tests:
+              - not_null
+
+      - name: raw_products
+        description: One record per SKU for items sold in stores
+        columns:
+          - name: sku
+            description: Stock-keeping unit identifier. Must match format XXX-NNN.
+            data_tests:
+              - not_null
+              - unique
+              - validate_sku:
+                  arguments:
+                    column_name: sku
+          - name: type
+            description: Product category type.
+
+      - name: raw_supplies
+        description: One record per supply per SKU of items sold in stores
+        columns:
+          - name: id
+            description: The unique identifier for each supply item.
+            data_tests:
+              - not_null
+          - name: sku
+            description: Foreign key to raw_products.
+            data_tests:
+              - not_null
+          - name: cost
+            description: Cost of the supply item in cents.
+            data_tests:
+              - not_null

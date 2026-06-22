@@ -1,0 +1,17 @@
+version: 2
+
+groups:
+  - name: analytics
+    owner:
+      name: Analytics Engineering
+      email: analytics@jaffleshop.com
+
+  - name: finance
+    owner:
+      name: Finance Team
+      email: finance@jaffleshop.com
+
+  - name: marketing
+    owner:
+      name: Marketing Team
+      email: marketing@jaffleshop.com

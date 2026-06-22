@@ -1,0 +1,64 @@
+config-version: 2
+
+name: "jaffle_shop"
+version: "3.0.0"
+require-dbt-version: ">=1.9.0"
+
+dbt-cloud:
+  project-id: 365760 # Put your project id here
+
+profile: default
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["data-tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+vars:
+  truncate_timespan_to: "{{ dbt.cast(dbt.current_timestamp(), 'datetime') }}"
+  "dbt_date:time_zone": "America/Los_Angeles"
+
+seeds:
+  jaffle_shop:
+    +schema: raw
+    discount_config:
+      +column_types:
+        min_order_total: float
+        max_order_total: float
+        discount_pct: float
+
+models:
+  jaffle_shop:
+    staging:
+      +materialized: view
+      +docs:
+        node_color: "#a1c4fd"
+    intermediate:
+      +materialized: ephemeral
+      +docs:
+        node_color: "#f9d56e"
+    marts:
+      +materialized: table
+      +persist_docs:
+        relation: true
+        columns: true
+      +docs:
+        node_color: "#b5ead7"
+      +grants:
+        select: ["reporter"]
+      +post-hook:
+        - "{{ log('Model ' ~ this ~ ' finished building.', info=True) }}"
+
+snapshots:
+  jaffle_shop:
+    +target_schema: snapshots
+    +docs:
+      node_color: "#ffd6e0"
+
+on-run-start:
+  - "{{ insert_freshness_heartbeat() }}"
