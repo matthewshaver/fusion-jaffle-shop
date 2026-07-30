@@ -1,3 +1,5 @@
+{{ config(materialized='table', catalog_name='horizon_catalog', alias='ORDER_ITEMS') }}
+
 with
 
 order_items as (

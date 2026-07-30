@@ -1,3 +1,11 @@
+{{ config(
+    materialized='table',
+    catalog_name='horizon_catalog',
+    alias='ORDERS',
+    grants={} if target.name == 'duckdb' else {'select': ['ACCOUNTADMIN']},
+    persist_docs={'relation': false, 'columns': false} if target.name == 'duckdb' else {'relation': true, 'columns': true}
+) }}
+
 with
 
 orders as (
