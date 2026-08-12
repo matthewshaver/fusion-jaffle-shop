@@ -1,3 +1,5 @@
+{{ config(materialized='table', catalog_name='horizon_catalog', alias='STG_ORDERS') }}
+
 with
 
 source as (
@@ -26,7 +28,7 @@ renamed as (
         {{ cents_to_dollars('order_total') }} as order_total,
 
         ---------- timestamps
-        {{ dbt.date_trunc('day','ordered_at') }} as ordered_at
+        cast({{ dbt.date_trunc('day','ordered_at') }} as timestamp_ntz(6)) as ordered_at
 
     from source
 

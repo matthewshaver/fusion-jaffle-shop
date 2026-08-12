@@ -1,0 +1,14 @@
+catalogs:
+  - name: horizon_catalog
+    type: horizon
+    table_format: iceberg
+    config:
+      snowflake:
+        external_volume: iceberg_ext_vol
+      duckdb:
+        warehouse: DBT_MSHAVER            # Horizon REST catalog = the Snowflake database name
+        endpoint: "https://BBNGOYG-MF95317.snowflakecomputing.com/polaris/api/catalog"
+        secret: horizon_secret
+        default_schema: RAW
+        access_delegation_mode: VENDED_CREDENTIALS   # Horizon vends scoped temp S3 creds; no AWS keys needed
+        

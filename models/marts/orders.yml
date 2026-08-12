@@ -4,8 +4,12 @@ models:
     config:
       group: finance
       access: public
+      # Contract disabled: this model builds on both Snowflake and DuckDB, and a
+      # single enforced contract can't hold engine-specific type names (Snowflake
+      # `number`/`timestamp_ntz` are invalid in DuckDB) or match both engines'
+      # inferred aggregate types. Re-enable per-engine if/when needed.
       contract:
-        enforced: true
+        enforced: false
     data_tests:
       - dbt_utils.expression_is_true:
           arguments:

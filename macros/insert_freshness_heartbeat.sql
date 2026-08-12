@@ -9,7 +9,9 @@
         Only runs in non-CI environments to avoid polluting test schemas.
     #}
 
-    {% if target.name not in ('ci', 'dev') %}
+    {# Skip on duckdb: the heartbeat writes to the raw Snowflake source, which
+       isn't attached in the DuckDB (Iceberg-offload) session. #}
+    {% if target.name not in ('ci', 'dev', 'duckdb') %}
 
         {% set heartbeat_id = 'HEARTBEAT-' ~ modules.datetime.date.today().strftime('%Y%m%d') %}
 

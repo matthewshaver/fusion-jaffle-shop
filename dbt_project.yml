@@ -19,6 +19,9 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
+flags:
+  use_catalogs_v2: true
+
 vars:
   truncate_timespan_to: "{{ dbt.cast(dbt.current_timestamp(), 'datetime') }}"
   "dbt_date:time_zone": "America/Los_Angeles"
@@ -49,8 +52,9 @@ models:
         columns: true
       +docs:
         node_color: "#b5ead7"
-      +grants:
-        select: ["ACCOUNTADMIN"]
+      # NOTE: project-level grants removed so they don't get merged into models
+      # built on DuckDB (the dbt-duckdb grants macro hits a Fusion `warn_once`
+      # bug). Apply grants per-model, target-aware, instead (see marts/orders.sql).
       +post-hook:
         - "{{ log('Model ' ~ this ~ ' finished building.', info=True) }}"
 
