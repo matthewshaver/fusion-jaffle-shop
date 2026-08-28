@@ -1,6 +1,12 @@
 title: "Jaffle Shop overview"
 source: analytics
 
+queries:
+  location_kpis:
+    source: analytics
+    metrics: [location_revenue, location_orders, revenue_per_customer_by_location]
+    dimensions: [location__location_name]
+
 charts:
   revenue_trend:
     type: line
@@ -11,7 +17,7 @@ charts:
   revenue_by_location:
     type: bar
     model: analytics.location_performance
-    x: location__location_name
+    x: location_name
     y: location_revenue
     title: "Revenue by location"
   cumulative_revenue:
@@ -26,6 +32,10 @@ charts:
     value: revenue
     color: is_food_item
     title: "Revenue by product type"
+  location_kpis_table:
+    type: table
+    query: location_kpis
+    title: "Location KPIs"
 
 rows:
   - title: "Trends"
