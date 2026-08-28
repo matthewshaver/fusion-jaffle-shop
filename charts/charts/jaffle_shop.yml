@@ -1,10 +1,6 @@
 title: "Jaffle Shop overview"
 source: analytics
 
-sources:
-  analytics:
-    type: dbt_profile
-
 charts:
   revenue_trend:
     type: line

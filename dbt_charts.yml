@@ -1,1 +1,7 @@
 name: jaffle_shop
+
+sources:
+  analytics:
+    type: dbt_profile
+    profile: my_dbt_project
+    target: dev
