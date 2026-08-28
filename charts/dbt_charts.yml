@@ -1,0 +1,15 @@
+sources:
+  analytics:
+    type: snowflake
+    account: "{{ env_var('DCT_ANALYTICS_ACCOUNT', 'unused') }}"
+    user: "{{ env_var('DCT_ANALYTICS_USER', 'readonly') }}"
+    password: "{{ env_var('DCT_ANALYTICS_PASSWORD', 'unused') }}"
+    database: "{{ env_var('DCT_ANALYTICS_DATABASE', 'analytics') }}"
+    warehouse: "{{ env_var('DCT_ANALYTICS_WAREHOUSE', 'compute_wh') }}"
+  jaffle_shop_charts:
+    type: snowflake
+    account: "{{ env_var('DCT_JAFFLE_SHOP_CHARTS_ACCOUNT', 'unused') }}"
+    user: "{{ env_var('DCT_JAFFLE_SHOP_CHARTS_USER', 'readonly') }}"
+    password: "{{ env_var('DCT_JAFFLE_SHOP_CHARTS_PASSWORD', 'unused') }}"
+    database: "{{ env_var('DCT_JAFFLE_SHOP_CHARTS_DATABASE', 'analytics') }}"
+    warehouse: "{{ env_var('DCT_JAFFLE_SHOP_CHARTS_WAREHOUSE', 'compute_wh') }}"

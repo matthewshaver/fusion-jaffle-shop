@@ -1,0 +1,105 @@
+title: Jaffle Shop overview
+notes: Revenue, location, and product-mix performance translated from the Jaffle Shop dbt chart definition.
+source: analytics
+
+queries:
+  monthly_revenue:
+    notes: Monthly item revenue plus a running total for the complete available sales period.
+    sql: |
+      WITH monthly AS (
+        SELECT
+          DATE_TRUNC('month', ordered_at)::DATE AS month,
+          SUM(product_price) AS revenue
+        FROM RAW.ORDER_ITEMS
+        GROUP BY 1
+      )
+      SELECT
+        month,
+        revenue,
+        SUM(revenue) OVER (ORDER BY month) AS cumulative_revenue
+      FROM monthly
+      ORDER BY month
+  location_revenue:
+    notes: Revenue and core operating metrics by store location, calculated from the modeled orders table.
+    sql: |
+      SELECT
+        l.location_name,
+        SUM(o.order_total) AS location_revenue,
+        COUNT(*) AS total_orders,
+        COUNT(DISTINCT o.customer_id) AS unique_customers,
+        AVG(o.order_total) AS avg_order_value
+      FROM RAW.ORDERS AS o
+      JOIN RAW.LOCATIONS AS l ON o.location_id = l.location_id
+      GROUP BY 1
+      ORDER BY location_revenue DESC
+  revenue_by_product_type:
+    notes: Item revenue split between food and drink products.
+    sql: |
+      SELECT
+        IFF(is_food_item, 'Food', 'Drink') AS product_type,
+        SUM(product_price) AS revenue
+      FROM RAW.ORDER_ITEMS
+      GROUP BY 1
+      ORDER BY revenue DESC
+
+charts:
+  revenue_trend:
+    type: line
+    query: monthly_revenue
+    x: month
+    y: revenue
+    title: Revenue by month
+    notes: How has item revenue changed month over month?
+    style:
+      number_format: currency_compact
+      time_format: '%b %Y'
+  cumulative_revenue:
+    type: area
+    query: monthly_revenue
+    x: month
+    y: cumulative_revenue
+    title: Cumulative revenue
+    notes: How much item revenue has accumulated through each month?
+    style:
+      number_format: currency_compact
+      time_format: '%b %Y'
+  revenue_by_location:
+    type: bar
+    query: location_revenue
+    x: location_name
+    y: location_revenue
+    title: Revenue by location
+    notes: Which locations generated the most total revenue?
+    sort: {by: location_revenue, order: desc}
+    style:
+      number_format: currency_compact
+  revenue_by_type:
+    type: donut
+    query: revenue_by_product_type
+    theta: revenue
+    color: product_type
+    title: Revenue by product type
+    notes: How is item revenue divided between food and drink products?
+    total:
+      label: Total revenue
+      format: currency_compact
+  location_kpis_table:
+    type: table
+    query: location_revenue
+    title: Location performance detail
+    notes: What are the revenue, order, customer, and margin metrics for each location?
+    style:
+      columns:
+        location_name: {label: Location}
+        location_revenue: {label: Revenue, format: currency_compact}
+        total_orders: {label: Orders, format: integer}
+        unique_customers: {label: Customers, format: integer}
+        avg_order_value: {label: Average order value, format: currency}
+
+rows:
+  - title: Trends
+    cols: [revenue_trend, cumulative_revenue]
+  - title: Locations and product mix
+    cols: [revenue_by_location, revenue_by_type]
+  - title: Detail
+    rows: [location_kpis_table]
