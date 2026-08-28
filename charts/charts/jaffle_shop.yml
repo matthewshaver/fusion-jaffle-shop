@@ -90,6 +90,7 @@ charts:
     notes: What are the revenue, order, customer, and margin metrics for each location?
     style:
       columns:
+        location_name: {label: Location}
         location_revenue: {label: Revenue, format: currency_compact}
         total_orders: {label: Orders, format: integer}
         unique_customers: {label: Customers, format: integer}
