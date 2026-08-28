@@ -1,6 +1,45 @@
-    title: "Jaffle Shop overview"
-    source: analytics
+title: "Jaffle Shop overview"
+source: analytics
 
-    sources:
-      analytics:
-        type: dbt_profile
+sources:
+  analytics:
+    type: dbt_profile
+
+charts:
+  revenue_trend:
+    type: line
+    model: analytics.order_items
+    x: metric_time__month
+    y: revenue
+    title: "Revenue by month"
+  revenue_by_location:
+    type: bar
+    model: analytics.location_performance
+    x: location__location_name
+    y: location_revenue
+    title: "Revenue by location"
+  cumulative_revenue:
+    type: area
+    model: analytics.order_items
+    x: metric_time__month
+    y: cumulative_revenue
+    title: "Cumulative revenue"
+  revenue_by_type:
+    type: pie
+    model: analytics.order_items
+    value: revenue
+    color: is_food_item
+    title: "Revenue by product type"
+
+rows:
+  - title: "Trends"
+    cols:
+      - revenue_trend
+      - cumulative_revenue
+  - title: "Locations"
+    cols:
+      - revenue_by_location
+      - revenue_by_type
+  - title: "Detail"
+    rows:
+      - location_kpis_table
