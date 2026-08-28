@@ -95,8 +95,6 @@ charts:
         total_orders: {label: Orders, format: integer}
         unique_customers: {label: Customers, format: integer}
         avg_order_value: {label: Average order value, format: currency}
-        total_gross_margin: {label: Gross margin, format: currency_compact}
-        gross_margin_pct: {label: Gross margin %, format: percent}
 
 rows:
   - title: Trends
