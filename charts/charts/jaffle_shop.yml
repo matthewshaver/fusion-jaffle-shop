@@ -20,17 +20,17 @@ queries:
       FROM monthly
       ORDER BY month
   location_revenue:
-    notes: Revenue and core operating metrics by store location.
+    notes: Revenue and core operating metrics by store location, calculated from the modeled orders table.
     sql: |
       SELECT
-        location_name,
-        total_revenue AS location_revenue,
-        total_orders,
-        unique_customers,
-        avg_order_value,
-        total_gross_margin,
-        gross_margin_pct
-      FROM RAW.LOCATION_PERFORMANCE
+        l.location_name,
+        SUM(o.order_total) AS location_revenue,
+        COUNT(*) AS total_orders,
+        COUNT(DISTINCT o.customer_id) AS unique_customers,
+        AVG(o.order_total) AS avg_order_value
+      FROM RAW.ORDERS AS o
+      JOIN RAW.LOCATIONS AS l ON o.location_id = l.location_id
+      GROUP BY 1
       ORDER BY location_revenue DESC
   revenue_by_product_type:
     notes: Item revenue split between food and drink products.
