@@ -1,0 +1,8 @@
+sources:
+  analytics:
+    type: snowflake
+    account: "{{ env_var('DCT_ANALYTICS_ACCOUNT', 'unused') }}"
+    user: "{{ env_var('DCT_ANALYTICS_USER', 'readonly') }}"
+    password: "{{ env_var('DCT_ANALYTICS_PASSWORD', 'unused') }}"
+    database: "{{ env_var('DCT_ANALYTICS_DATABASE', 'analytics') }}"
+    warehouse: "{{ env_var('DCT_ANALYTICS_WAREHOUSE', 'compute_wh') }}"
