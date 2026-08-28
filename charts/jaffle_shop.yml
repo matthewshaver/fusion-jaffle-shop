@@ -1,0 +1,6 @@
+    title: "Jaffle Shop overview"
+    source: analytics
+
+    sources:
+      analytics:
+        type: dbt_profile
