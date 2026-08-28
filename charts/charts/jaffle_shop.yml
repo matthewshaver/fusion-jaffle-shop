@@ -2,35 +2,69 @@ title: "Jaffle Shop overview"
 source: analytics
 
 queries:
+  revenue_by_month:
+    sql: |
+      SELECT date_trunc('month', ordered_at) AS month,
+             sum(product_price) AS revenue
+      FROM {{ ref('order_items') }}
+      GROUP BY 1
+      ORDER BY 1
+  revenue_by_location:
+    sql: |
+      SELECT location_name,
+             total_revenue AS revenue
+      FROM {{ ref('location_performance') }}
+      ORDER BY total_revenue DESC
+  cumulative_revenue:
+    sql: |
+      SELECT month,
+             sum(revenue) OVER (ORDER BY month) AS cumulative_revenue
+      FROM (
+        SELECT date_trunc('month', ordered_at) AS month,
+               sum(product_price) AS revenue
+        FROM {{ ref('order_items') }}
+        GROUP BY 1
+      )
+      ORDER BY month
+  revenue_by_type:
+    sql: |
+      SELECT CASE WHEN is_food_item = 1 THEN 'Food' ELSE 'Drink' END AS product_type,
+             sum(product_price) AS revenue
+      FROM {{ ref('order_items') }}
+      GROUP BY 1
   location_kpis:
-    source: analytics
-    metrics: [location_revenue, location_orders, revenue_per_customer_by_location]
-    dimensions: [location__location_name]
+    sql: |
+      SELECT location_name,
+             total_revenue,
+             total_orders,
+             avg_order_value
+      FROM {{ ref('location_performance') }}
+      ORDER BY total_revenue DESC
 
 charts:
   revenue_trend:
     type: line
-    model: analytics.order_items
-    x: metric_time__month
+    query: revenue_by_month
+    x: month
     y: revenue
     title: "Revenue by month"
   revenue_by_location:
     type: bar
-    model: analytics.location_performance
+    query: revenue_by_location
     x: location_name
-    y: location_revenue
+    y: revenue
     title: "Revenue by location"
   cumulative_revenue:
     type: area
-    model: analytics.order_items
-    x: metric_time__month
+    query: cumulative_revenue
+    x: month
     y: cumulative_revenue
     title: "Cumulative revenue"
   revenue_by_type:
     type: pie
-    model: analytics.order_items
-    value: revenue
-    color: is_food_item
+    query: revenue_by_type
+    theta: revenue
+    color: product_type
     title: "Revenue by product type"
   location_kpis_table:
     type: table
