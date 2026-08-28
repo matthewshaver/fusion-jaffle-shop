@@ -1,0 +1,8 @@
+sources:
+  guide:
+    type: snowflake
+    account: "{{ env_var('DCT_GUIDE_ACCOUNT', 'unused') }}"
+    user: "{{ env_var('DCT_GUIDE_USER', 'readonly') }}"
+    password: "{{ env_var('DCT_GUIDE_PASSWORD', 'unused') }}"
+    database: "{{ env_var('DCT_GUIDE_DATABASE', 'analytics') }}"
+    warehouse: "{{ env_var('DCT_GUIDE_WAREHOUSE', 'compute_wh') }}"
