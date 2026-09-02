@@ -6,14 +6,14 @@ queries:
     sql: |
       SELECT date_trunc('month', ordered_at) AS month,
              sum(product_price) AS revenue
-      FROM {{ ref('order_items') }}
+      FROM DBT_MSHAVER.RAW.order_items
       GROUP BY 1
       ORDER BY 1
   revenue_by_location:
     sql: |
       SELECT location_name,
              total_revenue AS revenue
-      FROM {{ ref('location_performance') }}
+      FROM DBT_MSHAVER.RAW.location_performance
       ORDER BY total_revenue DESC
   cumulative_revenue:
     sql: |
@@ -22,7 +22,7 @@ queries:
       FROM (
         SELECT date_trunc('month', ordered_at) AS month,
                sum(product_price) AS revenue
-        FROM {{ ref('order_items') }}
+        FROM DBT_MSHAVER.RAW.order_items
         GROUP BY 1
       )
       ORDER BY month
@@ -30,7 +30,7 @@ queries:
     sql: |
       SELECT CASE WHEN is_food_item = 1 THEN 'Food' ELSE 'Drink' END AS product_type,
              sum(product_price) AS revenue
-      FROM {{ ref('order_items') }}
+      FROM DBT_MSHAVER.RAW.order_items
       GROUP BY 1
   location_kpis:
     sql: |
@@ -38,7 +38,7 @@ queries:
              total_revenue,
              total_orders,
              avg_order_value
-      FROM {{ ref('location_performance') }}
+      FROM DBT_MSHAVER.RAW.location_performance
       ORDER BY total_revenue DESC
 
 charts:
