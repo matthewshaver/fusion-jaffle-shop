@@ -13,7 +13,7 @@ queries:
     sql: |
       SELECT location_name,
              total_revenue AS revenue
-      FROM analytics.marts.location_performance
+      FROM DBT_MSHAVER.marts.location_performance
       ORDER BY total_revenue DESC
   cumulative_revenue:
     sql: |
