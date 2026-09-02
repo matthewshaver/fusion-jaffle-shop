@@ -1,0 +1,97 @@
+title: Commerce performance
+source: analytics
+queries:
+  commerce_kpis:
+    notes: Returns single-value order, customer, revenue, and order-value metrics across the full available period.
+    sql: |
+      SELECT
+        COUNT(*) AS orders,
+        COUNT(DISTINCT customer_id) AS customers,
+        SUM(order_total) AS revenue,
+        AVG(order_total) AS average_order_value
+      FROM RAW.ORDERS
+  monthly_performance:
+    notes: Returns monthly revenue, order volume, and distinct purchasing customers.
+    sql: |
+      SELECT
+        DATE_TRUNC('month', ordered_at)::DATE AS month,
+        COUNT(*) AS orders,
+        COUNT(DISTINCT customer_id) AS customers,
+        SUM(order_total) AS revenue
+      FROM RAW.ORDERS
+      GROUP BY 1
+      ORDER BY 1
+  top_products:
+    notes: Returns the ten products generating the most item-level revenue.
+    sql: |
+      SELECT
+        product_name,
+        COUNT(*) AS items_sold,
+        SUM(product_price) AS product_revenue
+      FROM RAW.ORDER_ITEMS
+      GROUP BY 1
+      ORDER BY product_revenue DESC
+      LIMIT 10
+charts:
+  total_revenue:
+    notes: Shows total revenue across the available order history.
+    query: commerce_kpis
+    type: kpi
+    value: revenue
+    style:
+      value:
+        format: currency
+  total_orders:
+    notes: Shows the total count of orders in the available history.
+    query: commerce_kpis
+    type: kpi
+    value: orders
+    style:
+      value:
+        format: number
+  total_customers:
+    notes: Shows distinct customers who placed an order.
+    query: commerce_kpis
+    type: kpi
+    value: customers
+    style:
+      value:
+        format: number
+  average_order_value:
+    notes: Shows average revenue per order.
+    query: commerce_kpis
+    type: kpi
+    value: average_order_value
+    style:
+      value:
+        format: currency_full
+  monthly_revenue:
+    notes: Shows how recognized order revenue changes month by month.
+    query: monthly_performance
+    type: line
+    x: month
+    y: revenue
+    style:
+      number_format: currency
+      time_format: '%b %Y'
+  monthly_orders:
+    notes: Shows monthly order volume and the distinct customers who ordered.
+    query: monthly_performance
+    type: line
+    x: month
+    y: [orders, customers]
+    style:
+      number_format: number
+      time_format: '%b %Y'
+  top_products_by_revenue:
+    notes: Ranks the ten products with the greatest item-level revenue.
+    query: top_products
+    type: bar
+    x: product_name
+    y: product_revenue
+    style:
+      number_format: currency
+rows:
+  - cols: [total_revenue, total_orders, total_customers, average_order_value]
+  - monthly_revenue
+  - cols: [monthly_orders, top_products_by_revenue]
