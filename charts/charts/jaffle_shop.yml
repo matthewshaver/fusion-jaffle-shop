@@ -30,7 +30,7 @@ queries:
     sql: |
       SELECT CASE WHEN is_food_item = 1 THEN 'Food' ELSE 'Drink' END AS product_type,
              sum(product_price) AS revenue
-      FROM analytics.marts.order_items
+      FROM DBT_MSHAVER.marts.order_items
       GROUP BY 1
   location_kpis:
     sql: |
