@@ -4,7 +4,7 @@ source as (
 
     select * from {{ source('ecom', 'raw_orders') }}
     where id not like 'HEARTBEAT-%'
-    {{ limit_in_dev('ordered_at') }}
+    {{ limit_in_dev('ordered_at', source('ecom', 'raw_orders')) }}
 
 ),
 
