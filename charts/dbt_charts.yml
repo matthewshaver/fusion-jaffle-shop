@@ -1,0 +1,15 @@
+sources:
+  jaffle_shop:
+    type: snowflake
+    account: "{{ env_var('DCT_JAFFLE_SHOP_ACCOUNT', 'unused') }}"
+    user: "{{ env_var('DCT_JAFFLE_SHOP_USER', 'readonly') }}"
+    password: "{{ env_var('DCT_JAFFLE_SHOP_PASSWORD', 'unused') }}"
+    database: "{{ env_var('DCT_JAFFLE_SHOP_DATABASE', 'analytics') }}"
+    warehouse: "{{ env_var('DCT_JAFFLE_SHOP_WAREHOUSE', 'compute_wh') }}"
+  wysiwyg:
+    type: snowflake
+    account: "{{ env_var('DCT_WYSIWYG_ACCOUNT', 'unused') }}"
+    user: "{{ env_var('DCT_WYSIWYG_USER', 'readonly') }}"
+    password: "{{ env_var('DCT_WYSIWYG_PASSWORD', 'unused') }}"
+    database: "{{ env_var('DCT_WYSIWYG_DATABASE', 'analytics') }}"
+    warehouse: "{{ env_var('DCT_WYSIWYG_WAREHOUSE', 'compute_wh') }}"
