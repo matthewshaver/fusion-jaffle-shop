@@ -38,7 +38,7 @@ queries:
              total_revenue,
              total_orders,
              avg_order_value
-      FROM DBT_MSHAVER.marts.location_performance
+      FROM DBT_MSHAVER.RAW.location_performance
       ORDER BY total_revenue DESC
 
 charts:
